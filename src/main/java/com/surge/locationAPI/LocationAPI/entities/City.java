@@ -1,10 +1,8 @@
 package com.surge.locationAPI.LocationAPI.entities;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -13,6 +11,18 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "state")
+@Table(
+        name = "city",
+        uniqueConstraints =
+        @UniqueConstraint(
+                name = "city_unique",
+                columnNames = {
+                        "city_name",
+                        "city_slug"
+                }
+        )
+)
 public class City {
 
     @Id
@@ -25,14 +35,22 @@ public class City {
             strategy = GenerationType.SEQUENCE,
             generator = "city_sequence"
     )
-    private  Long cityId;
+    private Long cityId;
 
-    private String name;
-
-    @ManyToOne
-    @JoinColumn(
-            name = "state_id",
-            referencedColumnName = "stateId"
+    @Column(
+            name = "city_name",
+            nullable = false
     )
+    private String cityName;
+
+    @Column(
+            name = "city_slug",
+            nullable = false
+    )
+    private String citySlug;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "state_id", referencedColumnName = "stateId")
+    @JsonIgnore
     private State state;
 }

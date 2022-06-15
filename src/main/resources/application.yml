@@ -5,7 +5,8 @@ spring:
     password: '#Mugshot23'
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
 server:
-  port: 9009
+  servlet:
+    context-path: "/api/v1"

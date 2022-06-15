@@ -1,13 +1,16 @@
 package com.surge.locationAPI.LocationAPI.entities;
 
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -18,10 +21,10 @@ import javax.persistence.*;
                 name = "state_unique",
                 columnNames = {
                         "state_name",
-                        "state_capital"
+                        "state_capital",
+                        "state_slug"
                 }
         )
-
 )
 public class State {
 
@@ -48,6 +51,18 @@ public class State {
             nullable = false
     )
     private String stateCapital;
+
+    @Column(
+            name = "state_slug",
+            nullable = false
+    )
+    private String stateSlug;
+
+    @OneToMany(mappedBy = "state", cascade = CascadeType.ALL)
+    private List<LocalGovernmentArea> localGovernmentAreas;
+
+    @OneToMany(mappedBy = "state", cascade = CascadeType.ALL)
+    private List<City> city;
 
 
 }

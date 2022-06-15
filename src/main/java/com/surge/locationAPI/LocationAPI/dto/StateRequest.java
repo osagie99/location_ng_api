@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -17,12 +17,17 @@ public class StateRequest {
 
 
     @NotNull(message = "State Name should not be null")
+    @NotEmpty(message = "State Name should not be empty")
     @Size(min = 3, message = "State Name too short")
-    @Size(max = 16, message = "State Name too long")
     private  String stateName;
 
+    @NotNull(message = "State Slug should not be null")
+    @NotEmpty(message = "State slug should not be empty")
+    @Size(min = 3, message = "State slug too short")
+    private  String stateSlug;
+
     @NotNull(message = "State Capital should not be null")
+    @NotEmpty(message = "State Capital should not be empty")
     @Size(min = 3, message = "State Capital too short")
-    @Size(max = 16, message = "State Capital too long")
     private String stateCapital;
 }

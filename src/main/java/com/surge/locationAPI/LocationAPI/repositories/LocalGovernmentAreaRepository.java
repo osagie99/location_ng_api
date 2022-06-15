@@ -13,8 +13,8 @@ public interface LocalGovernmentAreaRepository extends JpaRepository<LocalGovern
     @Query("" +
             "select localGovernmentArea " +
             "from LocalGovernmentArea localGovernmentArea " +
-            "where localGovernmentArea.state.stateId =:stateId " +
+            "where localGovernmentArea.state.stateSlug =:stateSlug " +
             ""
     )
-    List<LocalGovernmentArea> getLocalGovernmentAreaByStateId(Long stateId);
+    List<LocalGovernmentArea> getLocalGovernmentAreasByStateSlug(String stateSlug);
 }

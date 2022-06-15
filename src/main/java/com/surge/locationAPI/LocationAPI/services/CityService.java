@@ -1,9 +1,12 @@
 package com.surge.locationAPI.LocationAPI.services;
 
-import com.surge.locationAPI.LocationAPI.dto.StateRequest;
+
+import com.surge.locationAPI.LocationAPI.dto.CityRequest;
+import com.surge.locationAPI.LocationAPI.entities.City;
 import com.surge.locationAPI.LocationAPI.entities.State;
 import com.surge.locationAPI.LocationAPI.exceptions.ExtendedConstants;
 import com.surge.locationAPI.LocationAPI.helpers.AppResponse;
+import com.surge.locationAPI.LocationAPI.repositories.CityRepository;
 import com.surge.locationAPI.LocationAPI.repositories.StateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,62 +14,61 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class StateService {
+public class CityService {
 
+    private final CityRepository cityRepository;
     private final StateRepository stateRepository;
 
     @Autowired
-    StateService(StateRepository stateRepository) {
+    CityService(CityRepository cityRepository, StateRepository stateRepository) {
+        this.cityRepository = cityRepository;
         this.stateRepository = stateRepository;
     }
 
-    public AppResponse createState(StateRequest stateRequest) {
+    public AppResponse getListOfCities() {
         AppResponse appResponse = new AppResponse();
 
-
-        State state = State.builder()
-                .stateName(stateRequest.getStateName())
-                .stateSlug(stateRequest.getStateSlug())
-                .stateCapital(stateRequest.getStateCapital())
-                .build();
-        stateRepository.save(state);
+        List<City> cities = cityRepository.findAll();
         appResponse.setMessage(ExtendedConstants.ResponseCode.SUCCESS.getDescription());
         appResponse.setStatus(ExtendedConstants.ResponseCode.SUCCESS.getCode());
-
+        appResponse.setData(cities);
 
         return appResponse;
     }
 
-    public AppResponse getStates() {
+    public AppResponse getCitiesByStateSlug(String stateSlug) {
         AppResponse appResponse = new AppResponse();
-        List<State> stateList = stateRepository.findAll();
-        System.out.println("stateList = " + stateList);
 
-
+        List<City> cities = cityRepository.getCitiesByStateSlug(stateSlug);
         appResponse.setMessage(ExtendedConstants.ResponseCode.SUCCESS.getDescription());
         appResponse.setStatus(ExtendedConstants.ResponseCode.SUCCESS.getCode());
-        appResponse.setData(stateList);
+        appResponse.setData(cities);
 
         return appResponse;
     }
 
-    public AppResponse getStatesByStateSlug(String stateSlug) {
+    public AppResponse createCities(CityRequest cityRequest) {
         AppResponse appResponse = new AppResponse();
 
-
-        State state = stateRepository.getStateByStateSlug(stateSlug);
+        State state = stateRepository.findById(cityRequest.getStateId()).orElse(null);
 
         if (state != null) {
+            City city =
+                    City.builder()
+                            .cityName(cityRequest.getCityName())
+                            .citySlug(cityRequest.getCitySlug())
+                            .state(state)
+                            .build();
+
+            cityRepository.save(city);
             appResponse.setMessage(ExtendedConstants.ResponseCode.SUCCESS.getDescription());
             appResponse.setStatus(ExtendedConstants.ResponseCode.SUCCESS.getCode());
-            appResponse.setData(state);
-
         } else {
-            appResponse.setMessage(ExtendedConstants.ResponseCode.ENTITY_NOT_FOUND.getDescription() + " FOR STATE WITH NAME " + stateSlug);
-            appResponse.setStatus(ExtendedConstants.ResponseCode.ENTITY_NOT_FOUND.getCode());
+            appResponse.setMessage("Invalid State ID");
+            appResponse.setStatus(ExtendedConstants.ResponseCode.FAILED.getCode());
         }
 
-
         return appResponse;
+
     }
 }

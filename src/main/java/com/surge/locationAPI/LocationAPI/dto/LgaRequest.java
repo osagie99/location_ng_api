@@ -13,13 +13,15 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LgaRequest {
-
-
+    @NotNull(message = "Lga Name should not be null")
+    @Size(min = 3, message = "Lga name too short")
+    @Size(max = 16, message = "Lga name too long")
+    private String lgaName;
 
     @NotNull(message = "Lga Name should not be null")
     @Size(min = 3, message = "Lga name too short")
     @Size(max = 16, message = "Lga name too long")
-    private String name;
+    private String lgaSlug;
 
     @NotNull(message = "State id should not be null")
     private Long stateId;
